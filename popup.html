@@ -43,8 +43,11 @@
     }
 
     function storeToken() {
-      const token = document.getElementById('tokenInput").value.trim();
-      if (!token) return alert('Token required');
+      const token = document.getElementById('tokenInput').value.trim();
+      if (!token) {
+        alert('Token required');
+        return;
+      }
       saveToken(token);
       location.reload();
     }
@@ -59,7 +62,11 @@
     }
 
     function openJSON() {
-      alert(JSON.stringify(window.clientData, null, 2));
+      if (!window.clientData) {
+        alert("No data loaded yet.");
+      } else {
+        alert(JSON.stringify(window.clientData, null, 2));
+      }
     }
 
     init();
