@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DocSnagger Extension</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; width: 300px; }
+    input, button { width: 100%; margin-top: 10px; padding: 8px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <h2>🔐 DocSnagger</h2>
+
+  <div id="authSection">
+    <input type="password" id="tokenInput" placeholder="Enter GitHub Token" />
+    <button onclick="storeToken()">Submit</button>
+  </div>
+
+  <div id="menuSection" class="hidden">
+    <button onclick="openPage('client-manager.html')">Manage Clients</button>
+    <button onclick="openPage('bank-editor.html')">Manage Banks</button>
+    <button onclick="openJSON()">View JSON</button>
+    <button onclick="logout()">Log Out</button>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/github-api.js"></script>
+  <script>
+    async function init() {
+      const token = getToken();
+      if (token) {
+        try {
+          await fetchAndCacheJSON();
+          document.getElementById('authSection').classList.add('hidden');
+          document.getElementById('menuSection').classList.remove('hidden');
+        } catch (err) {
+          alert('GitHub access error. Please check your token.');
+          clearToken();
+        }
+      }
+    }
+
+    function storeToken() {
+      const token = document.getElementById('tokenInput").value.trim();
+      if (!token) return alert('Token required');
+      saveToken(token);
+      location.reload();
+    }
+
+    function logout() {
+      clearToken();
+      location.reload();
+    }
+
+    function openPage(file) {
+      chrome.tabs.create({ url: chrome.runtime.getURL(file) });
+    }
+
+    function openJSON() {
+      alert(JSON.stringify(window.clientData, null, 2));
+    }
+
+    init();
+  </script>
+</body>
+</html>
